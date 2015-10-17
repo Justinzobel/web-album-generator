@@ -1,7 +1,14 @@
 #!/bin/bash
 # Code is GPL-2.0
 # CSS and table html from http://johnsardine.com/freebies/dl-html-css/simple-little-tab/
-# Code Generates a page to display wallpapers
+# Code Generates a page to display thumbnailed images
+
+# Check for images directory.
+if [[ ! -d images ]]
+  then
+    echo "No images folder found!"
+    exit 1
+fi
 
 # Do thumbnails
 pushd images
@@ -31,7 +38,7 @@ sed -i '/thmb/d' index
 cat <<'EOF' >> index.html
 <html>
 <head>
-<title>Solus Wallpaper Collection</title>
+<title>Sample Image Collection</title>
 <style>
 /*
 Taken from: http://johnsardine.com/freebies/dl-html-css/simple-little-tab/
@@ -158,11 +165,11 @@ hr {
 </style>
 </head>
 <body>
-<center><h2>Solus Wallpaper Collection</h2>
+<center><h2>Sample Image Collection</h2>
 <table class="tablesorter" cellspacing='0' width="325">
 EOF
 
-# Grab package names and versions
+# List images and thumbnails
 
 while read line
 do
@@ -177,7 +184,7 @@ cat <<'EOF' >> index.html
         </tbody>
 </table>
 EOF
-echo "<div><small>Made by <a href=mailto:NOSPAMjustin@solus-project.com>Justin Zobel</a> for the <a href=https://solus-project.com/>Solus Project</a><br>Last update $(date | sed 's/  / /g')</small></div>" | tee -a index.html
+echo "<div><small>Made by <a href=mailto:justin.zobel@gmail.com>Justin Zobel</a><br>Last update $(date | sed 's/  / /g')</small></div>" | tee -a index.html
 cat <<'EOF' >> index.html
 </center>
 
