@@ -10,6 +10,13 @@ if [[ ! -d images ]]
     exit 1
 fi
 
+# Check for convert by imagemagick
+if [[ ! -f /usr/bin/convert ]]
+  then
+    echo "ImageMagick not installed. Cannot find /usr/bin/convert"
+    exit 1
+fi
+
 # Do thumbnails
 pushd images
 for file in *;do
