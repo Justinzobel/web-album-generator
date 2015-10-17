@@ -3,36 +3,52 @@
 # CSS and table html from http://johnsardine.com/freebies/dl-html-css/simple-little-tab/
 # Code Generates a page to display thumbnailed images
 
+error="\e[31mError:\e[0m"
+notice="\e[93mNotice:\e[0m"
+
 # Check for images directory.
 if [[ ! -d images ]]
   then
-    echo "No images folder found!"
-    exit 1
+    echo -e "$error No images folder found!"
+    read -p "Do you want to create it (y/n)? "  -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+     then
+       mkdir images
+     else
+       echo ""
+       echo -e "$error Cannot continue without images folder."
+       exit 1
+    fi
+    
 fi
 
 # Check for convert by imagemagick
 if [[ ! -f /usr/bin/convert ]]
   then
-    echo "ImageMagick not installed. Cannot find /usr/bin/convert"
+    echo -e "$error ImageMagick not installed. Cannot find /usr/bin/convert"
     exit 1
 fi
+
+# Check if images folder empty
+if [[ $(find images -type f | wc -l) -eq 0 ]]
+  then echo -e "$error No files found in images directory."
+  exit 1
+fi
+
 
 # Do thumbnails
 pushd images
 for file in *;do
-  echo $file
-  if [[ $file == thmb* ]]
-    then echo "File is a thumbnail, ignoring."
-  else
-    if [[ ! -f thmb_$file ]]
+  if [[ ! $file == thmb* ]]
+    then
+      if [[ ! -f thmb_$file ]]
       then
         convert -resize 350 "$file" "thmb_$file"
-      else
-        echo "Thumnail exists, skipping."
-    fi
+      fi
   fi
 done
 popd
+echo -e "$notice Indexing done. Generating HTML."
 
 # Find images and index them
 if [[ -f index ]];then rm index;fi
@@ -200,3 +216,4 @@ cat <<'EOF' >> index.html
 EOF
 
 rm index
+echo -e "$notice HTML ready."
